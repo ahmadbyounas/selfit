@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AppBar, Toolbar, Typography, Button, Box, Stack, Avatar, Tooltip } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Stack, Avatar, Tooltip } from "@mui/material";
 import { MenuBook, Logout as LogoutIcon } from "@mui/icons-material";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";

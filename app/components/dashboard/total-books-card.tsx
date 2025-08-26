@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Card } from '@mui/material';
+import { Typography, Card } from '@mui/material';
 import { BookOutlined } from '@mui/icons-material';
 
 interface TotalBooksCardProps {

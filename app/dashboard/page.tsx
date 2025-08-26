@@ -14,7 +14,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material"
-import { Book, CheckCircle, AutoStories, Add, Delete, Search } from "@mui/icons-material"
+import { Book, Add, Delete, Search } from "@mui/icons-material"
 import Navbar from "../components/layout/navbar";
 import withAuth from "../hocs/withAuth";
 import Link from "next/link";

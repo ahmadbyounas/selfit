@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import MessageAlert from "./message-alert";
 import {
   Box,
@@ -15,7 +15,7 @@ import {
   Alert,
   Divider,
 } from "@mui/material"
-import { Visibility, VisibilityOff, ArrowForward, Google } from "@mui/icons-material"
+import { Visibility, VisibilityOff, ArrowForward, Google } from "@mui/icons-material" 
 import Link from "next/link"
 import { signIn } from "next-auth/react"
 import { login } from '../../lib/actions/auth'
@@ -193,6 +193,18 @@ export default function SignInPage() {
                 variant="outlined"
                 InputProps={{
                   style: { color: "white", borderRadius: "12px" },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        edge="end"
+                        sx={{ color: "rgba(255,255,255,0.7)" }}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 }}
                 InputLabelProps={{
                   style: { color: "rgba(255,255,255,0.7)" },
