@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShelfIt - Your Personal Book Management App
 
-## Getting Started
+ShelfIt is a modern web application designed to help readers organize, track, and manage their book collections effortlessly. Built with Next.js, Material-UI, and Prisma, ShelfIt provides a seamless experience for book enthusiasts.
 
-First, run the development server:
+## Features Implemented
+
+*   **User Authentication:** Secure sign-up, sign-in, and sign-out functionalities using NextAuth.js.
+*   **Book Management:**
+    *   Add new books to your collection.
+    *   View a comprehensive list of your books.
+    *   Delete books from your collection with a custom confirmation dialog.
+*   **Interactive Dashboard:**
+    *   Personalized welcome message.
+    *   Displays total number of books in your collection.
+    *   (Future: Visual insights into reading habits like daily books added/deleted).
+*   **Responsive User Interface:** Designed with Material-UI components for a consistent and adaptive experience across various devices.
+*   **Dynamic Landing Page:** Engaging Lottie animation and subtle parallax effects to welcome users.
+*   **Animated Interactions:** Custom animated empty states and smooth transitions for a modern feel.
+
+## Authentication Flow Details
+
+ShelfIt leverages **NextAuth.js** for robust authentication.
+
+*   **Credentials Provider:** Users can sign up and sign in using their email and password.
+*   **API Routes:** Authentication is handled via Next.js API routes (`/api/auth/[...nextauth]` for NextAuth.js core and `/api/auth/register` for user registration).
+*   **Session Management:** User sessions are securely managed, providing a personalized experience.
+*   **Protected Routes:** Higher-Order Components (HOCs) are used to protect routes, ensuring only authenticated users can access specific parts of the application (e.g., the dashboard).
+
+## Setup Instructions for Running Locally
+
+Follow these steps to get ShelfIt up and running on your local machine.
+
+### Prerequisites
+
+*   Node.js (v18 or higher recommended)
+*   npm (Node Package Manager) or Yarn
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url> # Replace with your repository URL
+    cd shelfit
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
+
+### Database Setup (Prisma)
+
+ShelfIt uses Prisma as its ORM.
+
+1.  **Create a `.env.local` file:**
+    See the section below for details on creating this file.
+2.  **Run Prisma Migrations:**
+    This will apply the database schema and generate the Prisma client.
+    ```bash
+    npx prisma migrate dev --name init
+    ```
+    *(Note: `init` is a common name for the first migration. If you have existing migrations, adjust accordingly.)*
+3.  **Generate Prisma Client:**
+    ```bash
+    npx prisma generate
+    ```
+
+### Running the Development Server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Creating a `.env.local` File
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a file named `.env.local` in the root directory of your project. This file will store your environment variables.
 
-## Learn More
+```
+# Database URL for Prisma
+DATABASE_URL="postgresql://user:password@localhost:5432/shelfit?schema=public"
 
-To learn more about Next.js, take a look at the following resources:
+# NextAuth.js Secret (generate a strong random string)
+# You can generate one using: openssl rand -base64 32
+NEXTAUTH_SECRET="YOUR_NEXTAUTH_SECRET_HERE"
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# NextAuth.js URL (for production, this will be your deployed URL)
+NEXTAUTH_URL="http://localhost:3000"
+```
+**Important:** Replace the placeholder values with your actual database connection string and a strong secret.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Live Deployment Link:** [YOUR_DEPLOYMENT_LINK_HERE]
