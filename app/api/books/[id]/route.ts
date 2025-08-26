@@ -1,11 +1,11 @@
 
 import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { auth } from "../../../../app/auth";
 
 const prisma = new PrismaClient();
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
@@ -13,7 +13,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { id } = await params;
+    const { id } = await context.params;
 
     if (!id) {
       return new NextResponse("Book ID is required", { status: 400 });

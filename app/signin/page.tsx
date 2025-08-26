@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import MessageAlert from "./message-alert";
 import {
   Box,
   Button,
@@ -24,7 +25,7 @@ export default function SignInPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const searchParams = useSearchParams()
+  // Removed useSearchParams()
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -87,7 +88,7 @@ export default function SignInPage() {
         sx={{
           position: "absolute",
           top: "15%",
-          left: "15%",
+          left: "15%sass",
           width: 220,
           height: 220,
           borderRadius: "50%",
@@ -143,11 +144,9 @@ export default function SignInPage() {
             Welcome back! Sign in to continue your reading journey
           </Typography>
 
-          {searchParams.get("message") && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {searchParams.get("message")}
-            </Alert>
-          )}
+          <Suspense fallback={null}>
+            <MessageAlert />
+          </Suspense>
 
           {error && (
             <Alert severity="error" sx={{ mb: 2 }}>

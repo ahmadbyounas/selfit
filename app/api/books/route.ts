@@ -1,5 +1,5 @@
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { auth } from "../../../app/auth";
 
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     const query = searchParams.get("query");
 
     // Use plain object for where clause to avoid type error
-    const whereClause: any = {
+    const whereClause: Prisma.BookWhereInput = {
       userId: session.user.id,
     };
 
