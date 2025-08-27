@@ -9,10 +9,10 @@ import {
   Container,
   Typography,
   Card,
-  CircularProgress,
-  IconButton,
+   IconButton,
   Stack,
   TextField,
+  Skeleton, // Added Skeleton import
 } from "@mui/material"
 import { Book, Add, Delete, Search, Edit } from "@mui/icons-material"
 import Navbar from "../components/layout/navbar";
@@ -114,11 +114,13 @@ export default withAuth(function DashboardPage() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        maxHeight: "100vh",
+        height:"100%",
         display: "flex",
         flexDirection: "column",
         bgcolor: "linear-gradient(135deg, #312e81, #1e1b4b)",
         color: "white",
+        overflow: "hidden", // Add this to prevent main page scroll
       }}
     >
       {/* Header */}
@@ -152,7 +154,7 @@ export default withAuth(function DashboardPage() {
       </Box>
 
       {/* Books Section */}
-      <Container sx={{ flex: 1, pb: 6 }}>
+      <Container sx={{ flex: 1, pb: 6, display: "flex", flexDirection: "column", minHeight: 0, maxHeight: "calc(100vh - 362px)", overflowY: "auto" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Typography variant="h5" fontWeight="bold">
             Your Books
@@ -201,8 +203,33 @@ export default withAuth(function DashboardPage() {
         />
 
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <CircularProgress color="inherit" />
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 4 }}>
+            {[...Array(3)].map((_, index) => (
+              <Card
+                key={index}
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  borderRadius: 3,
+                  bgcolor: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(10px)",
+                }}
+              >
+                <Stack direction="row" alignItems="center" spacing={2} sx={{ flexGrow: 1 }}>
+                  <Skeleton variant="circular" width={32} height={32} sx={{ bgcolor: "rgba(255,255,255,0.2)" }} />
+                  <Box>
+                    <Skeleton variant="text" width={150} height={24} sx={{ bgcolor: "rgba(255,255,255,0.2)" }} />
+                    <Skeleton variant="text" width={200} height={18} sx={{ bgcolor: "rgba(255,255,255,0.15)" }} />
+                  </Box>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: "rgba(255,255,255,0.2)" }} />
+                  <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: "rgba(255,255,255,0.2)" }} />
+                </Stack>
+              </Card>
+            ))}
           </Box>
         ) : error ? (
           <Typography color="error" textAlign="center" sx={{ mt: 4 }}>
@@ -214,7 +241,17 @@ export default withAuth(function DashboardPage() {
           />
         ) : (
           <AnimatePresence>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                // flex: 1, // Removed flex:1
+                overflowY: "auto",
+                minHeight: 0, // Allow it to shrink and scroll
+                p: 2, // Add some padding-bottom for the last item
+              }}
+            >
               {books.map((book) => (
                 <motion.div
                   key={book.id}
@@ -222,32 +259,34 @@ export default withAuth(function DashboardPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
+                  whileHover={{ boxShadow: "0 0 25px rgba(255,255,255,0.3)" }} // Subtle white glow
+                  whileTap={{ scale: 0.95, y: 2 }} // Click/tap animation
+                  style={{ borderRadius: 24 }} // borderRadius 3 = 24px in MUI theme
                 >
                   <Card
                     sx={{
                       p: 2,
                       display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      alignItems: "center", // Align items vertically in the center
                       borderRadius: 3,
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      border: "1px solid rgba(255,255,255,0.15)",
-                      transition: "0.3s",
-                      "&:hover": {
-                    transform: "translateY(-3px)",
-                    boxShadow: "0 6px 20px rgba(0,0,0,0.4)",
-                    border: "1px solid #7c3aed", // Add a subtle border glow
-                  },
+                      bgcolor: "rgba(255,255,255,0.08)", // Slightly less opaque for glassmorphism
+                      border: "1px solid rgba(255,255,255,0.1)", // Thinner, less opaque border
+                      backdropFilter: "blur(10px)", // Glassmorphism blur effect
+                      transition: "0.3s", // Keep existing transition for smooth changes
+                      // Removed old hover styles as framer-motion handles them
                     }}
                   >
-                    <Box>
-                      <Typography fontWeight="600" sx={{ color: "white" }}>
-                        {book.title}
-                      </Typography>
-                      <Typography variant="body2" sx={{ opacity: 0.75, color: "#e5e7eb" }}>
-                        {book.author}
-                      </Typography>
-                    </Box>
+                    <Stack direction="row" alignItems="center" spacing={2} sx={{ flexGrow: 1 }}>
+                      <Book sx={{ fontSize: 32, color: "#fcd34d" }} /> {/* Book Icon */}
+                      <Box>
+                        <Typography fontWeight="600" sx={{ color: "white" }}>
+                          {book.title}
+                        </Typography>
+                        <Typography variant="body2" sx={{ opacity: 0.75, color: "#e5e7eb" }}>
+                          {book.author} - {book.genre} {/* Display genre here */}
+                        </Typography>
+                      </Box>
+                    </Stack>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       {/* Assuming status might be added later or derived */}
                       {book.status && (

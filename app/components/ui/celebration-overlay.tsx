@@ -1,7 +1,7 @@
 import React from 'react';
  import { AnimatePresence, motion } from 'framer-motion';
-import Confetti from 'react-confetti'; // New import
-import { useWindowSize } from 'react-use'; // New import
+import Confetti from 'react-confetti';  
+import { useWindowSize } from 'react-use'; 
 
 interface CelebrationOverlayProps {
   isVisible: boolean;
@@ -11,8 +11,7 @@ interface CelebrationOverlayProps {
 const CelebrationOverlay: React.FC<CelebrationOverlayProps> = ({ isVisible, onAnimationComplete }) => {
   const { width, height } = useWindowSize();
 
-  // This useEffect is now managed by the ConfettiProvider
-  React.useEffect(() => {
+   React.useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isVisible) {
       timer = setTimeout(() => {
