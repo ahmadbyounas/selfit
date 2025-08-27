@@ -25,13 +25,7 @@ interface Book {
   genre: string;
 }
 
-interface EditBookPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default withAuth(function EditBookPage({ params }: EditBookPageProps) {
+export default withAuth(function EditBookPage({ params }: { params: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) {
   const { id } = params;
   const [form, setForm] = useState<Book>({
     id: "",
