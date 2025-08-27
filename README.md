@@ -39,7 +39,7 @@ Follow these steps to get ShelfIt up and running on your local machine.
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url> 
+    git clone git@github.com:ahmadbyounas/selfit.git 
     cd shelfit
     ```
 2.  **Install dependencies:**
@@ -95,4 +95,4 @@ NEXTAUTH_URL="http://localhost:3000"
 
 ## Deployment
 
-**Live Deployment Link:** [YOUR_DEPLOYMENT_LINK_HERE]
+**Live Deployment Link:**  https://selfit.vercel.app/
