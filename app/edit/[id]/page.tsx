@@ -1,8 +1,8 @@
 
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+
 import {
   Box,
   Button,
@@ -13,63 +13,117 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material"
-import { Add, ArrowBack } from "@mui/icons-material"
+import { Save, ArrowBack } from "@mui/icons-material"
 import Link from "next/link"
-import Navbar from "../components/layout/navbar";
-import withAuth from "../hocs/withAuth";
-import CelebrationOverlay from "../components/ui/celebration-overlay";
+import Navbar from "../../components/layout/navbar";
+import withAuth from "../../hocs/withAuth";
 
-export default withAuth(function AddBookPage() {
-  const [form, setForm] = useState({
+interface Book {
+  id: string;
+  title: string;
+  author: string;
+  genre: string;
+}
+
+export default withAuth(function EditBookPage({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const [form, setForm] = useState<Book>({
+    id: "",
     title: "",
     author: "",
     genre: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [showCelebration, setShowCelebration] = useState(false);
-  const router = useRouter()
+  });
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!form.title || !form.author || !form.genre) {
-      setError("Please fill in all fields")
-      return
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
     }
 
-    setLoading(true)
-    setError(null)
+    const fetchBook = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/books/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch book details.");
+        }
+        const data: Book = await response.json();
+        setForm(data);
+      } catch (err) {
+        console.error("Error fetching book:", err);
+        setError("Failed to load book details. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBook();
+  }, [id]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title || !form.author || !form.genre) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    setSuccess(null);
 
     try {
-      const response = await fetch("/api/books", {
-        method: "POST",
+      const response = await fetch(`/api/books/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(form),
-      })
+      });
 
       if (response.ok) {
-        setShowCelebration(true);
-        // Confetti will show for 4 seconds, then redirect
-        setTimeout(() => {
-          setShowCelebration(false); // Hide confetti
-        }, 4000);
-        router.push("/dashboard"); // Redirect immediately after confetti
+        setSuccess("Book updated successfully!");
+        // Optionally redirect after a short delay
+        // setTimeout(() => router.push("/dashboard"), 2000);
       } else {
-        const errorMessage = await response.text()
-        setError(errorMessage || "Failed to add book.")
+        const errorMessage = await response.text();
+        setError(errorMessage || "Failed to update book.");
       }
     } catch (err) {
-      console.error("Error adding book:", err)
-      setError("An unexpected error occurred.")
+      console.error("Error updating book:", err);
+      setError("An unexpected error occurred.");
     } finally {
-      setLoading(false)
+      setSubmitting(false);
     }
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'linear-gradient(135deg, #312e81, #1e1b4b)', color: 'white' }}>
+        <CircularProgress color="inherit" />
+      </Box>
+    );
+  }
+
+  if (error && !form.id) { // Only show full error if book couldn't be loaded at all
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'linear-gradient(135deg, #312e81, #1e1b4b)', color: 'white' }}>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+        <Button component={Link} href="/dashboard" startIcon={<ArrowBack />} variant="outlined" sx={{ color: "white", borderColor: "rgba(255,255,255,0.3)" }}>
+          Back to Dashboard
+        </Button>
+      </Box>
+    );
   }
 
   return (
@@ -87,7 +141,7 @@ export default withAuth(function AddBookPage() {
       <Container maxWidth="sm" sx={{ py: 4, flexGrow: 1 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
           <Typography variant="h4" fontWeight="bold">
-            Add New Book
+            Edit Book
           </Typography>
           <Button
             component={Link}
@@ -105,6 +159,11 @@ export default withAuth(function AddBookPage() {
             {error}
           </Alert>
         )}
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {success}
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
@@ -114,7 +173,7 @@ export default withAuth(function AddBookPage() {
               name="title"
               value={form.title}
               onChange={handleChange}
-              disabled={loading}
+              disabled={submitting}
               variant="outlined"
               InputProps={{
                 style: { color: "white", borderRadius: "12px" },
@@ -139,7 +198,7 @@ export default withAuth(function AddBookPage() {
               name="author"
               value={form.author}
               onChange={handleChange}
-              disabled={loading}
+              disabled={submitting}
               variant="outlined"
               InputProps={{
                 style: { color: "white", borderRadius: "12px" },
@@ -164,7 +223,7 @@ export default withAuth(function AddBookPage() {
               name="genre"
               value={form.genre}
               onChange={handleChange}
-              disabled={loading}
+              disabled={submitting}
               variant="outlined"
               InputProps={{
                 style: { color: "white", borderRadius: "12px" },
@@ -188,8 +247,8 @@ export default withAuth(function AddBookPage() {
               type="submit"
               variant="contained"
               size="large"
-              disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />}
+              disabled={submitting}
+              startIcon={submitting ? <CircularProgress size={20} color="inherit" /> : <Save />}
               sx={{
                 mt: 1,
                 py: 1.5,
@@ -205,15 +264,11 @@ export default withAuth(function AddBookPage() {
                 },
               }}
             >
-              {loading ? "Adding Book..." : "Add Book"}
+              {submitting ? "Saving Changes..." : "Save Changes"}
             </Button>
           </Stack>
         </form>
       </Container>
-      <CelebrationOverlay
-        isVisible={showCelebration}
-        onAnimationComplete={() => setShowCelebration(false)}
-       />
     </Box>
-  )
+  );
 })

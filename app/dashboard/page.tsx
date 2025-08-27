@@ -14,7 +14,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material"
-import { Book, Add, Delete, Search } from "@mui/icons-material"
+import { Book, Add, Delete, Search, Edit } from "@mui/icons-material"
 import Navbar from "../components/layout/navbar";
 import withAuth from "../hocs/withAuth";
 import Link from "next/link";
@@ -86,22 +86,28 @@ export default withAuth(function DashboardPage() {
     if (!bookToDeleteId) return;
 
     setOpenDeleteDialog(false); // Close dialog immediately
-    setLoading(true);
-    setError(null);
+    const previousBooks = books; // Save current state for rollback
+
     try {
+      // Optimistically remove the book from the UI
+      setBooks(books.filter((book) => book.id !== bookToDeleteId));
+
       const response = await fetch(`/api/books/${bookToDeleteId}`, {
         method: "DELETE",
       });
+
       if (!response.ok) {
+        // If API call fails, revert the UI change
+        setBooks(previousBooks);
         throw new Error("Failed to delete book");
       }
-      fetchBooks(searchQuery);
+      // If successful, no need to re-fetch, UI is already updated
     } catch (err) {
       console.error("Error deleting book:", err);
       setError("Failed to delete book. Please try again.");
     } finally {
       setLoading(false);
-      setBookToDeleteId(null);
+      setBookToDeleteId(null); // Clear the ID after deletion attempt
     }
   };
 
@@ -260,6 +266,15 @@ export default withAuth(function DashboardPage() {
                           {book.status}
                         </Typography>
                       )}
+                      <IconButton
+                        aria-label="edit"
+                        component={Link}
+                        href={`/edit/${book.id}`}
+                        size="small"
+                        sx={{ color: "rgba(255,255,255,0.7)", "&:hover": { color: "#f59e0b" } }}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
                       <IconButton
                         aria-label="delete"
                         onClick={() => handleDeleteClick(book.id)}

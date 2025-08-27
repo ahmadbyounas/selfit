@@ -4,7 +4,8 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Button, Stack, Avatar, Tooltip } from "@mui/material";
 import { MenuBook, Logout as LogoutIcon } from "@mui/icons-material";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import {  useSession } from "next-auth/react";
+import {logOut} from '../../../lib/actions/auth'
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -40,13 +41,7 @@ const Navbar = () => {
         <Stack direction="row" spacing={2} alignItems="center">
           {session ? (
             <>
-              <Button
-                component={Link}
-                href="/dashboard"
-                sx={{ color: "white", "&:hover": { color: "#fcd34d" } }}
-              >
-                Dashboard
-              </Button>
+             
               <Tooltip title={session.user?.name || "User"}>
                 <Avatar
                   alt={session.user?.name || "User"}
@@ -66,7 +61,7 @@ const Navbar = () => {
               </Tooltip>
               <Tooltip title="Sign Out">
                 <Button
-                  onClick={() => signOut()}
+                  onClick={() => logOut()}
                   sx={{
                     color: "white",
                     borderColor: "rgba(255,255,255,0.3)",

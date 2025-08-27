@@ -1,13 +1,14 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { BookOutlined } from '@mui/icons-material'; // Using a simple icon for now
+// import { BookOutlined } from '@mui/icons-material'; // No longer needed
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'; // New import
 
 interface EmptyStateProps {
   message: string;
-  animation?: React.ReactNode; // Optional: for more complex animations like Lottie
+  // animation?: React.ReactNode; // No longer needed as we're using a specific Lottie
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({ message, animation }) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ message }) => { // Removed animation prop
   return (
     <Box
       sx={{
@@ -26,7 +27,12 @@ const EmptyState: React.FC<EmptyStateProps> = ({ message, animation }) => {
         backdropFilter: 'blur(5px)',
       }}
     >
-      {animation || <BookOutlined sx={{ fontSize: 80, mb: 2, color: 'rgba(255,255,255,0.5)' }} />}
+      <DotLottieReact
+        src="https://lottie.host/96765ff8-8263-4e51-aa03-7b6861cd056b/QQZzLS6FVJ.lottie"
+        loop
+        autoplay
+        style={{ width: '150px', height: '150px', marginBottom: '16px' }} // Adjust size as needed
+      />
       <Typography variant="h6" sx={{ mb: 1 }}>
         {message}
       </Typography>

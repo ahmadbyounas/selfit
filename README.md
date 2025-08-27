@@ -39,7 +39,7 @@ Follow these steps to get ShelfIt up and running on your local machine.
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url> # Replace with your repository URL
+    git clone <repository-url> 
     cd shelfit
     ```
 2.  **Install dependencies:**

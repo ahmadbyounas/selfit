@@ -9,9 +9,14 @@ import {
   Container,
   Box,
   Stack,
+  IconButton, // Added IconButton
+  Menu,       // Added Menu
+  MenuItem,   // Added MenuItem
+  useMediaQuery, // Added useMediaQuery
+  useTheme,   // Added useTheme
 } from "@mui/material";
 import { keyframes } from "@mui/system";
-import { MenuBook, ArrowRight, Book, BarChart, Search } from "@mui/icons-material";
+import { MenuBook, ArrowRight, Book, BarChart, Search, Menu as MenuIcon } from "@mui/icons-material"; // Added MenuIcon
 import Link from "next/link";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
@@ -45,6 +50,18 @@ interface Sparkle {
 export default function LandingPage() {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // State for mobile menu
+  const open = Boolean(anchorEl);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Check for small screens
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -160,38 +177,62 @@ export default function LandingPage() {
             </Typography>
           </Stack>
 
-          <Stack direction="row" spacing={2}>
-            <Button
-              component={Link}
-              href="/signin"
-              variant="outlined"
-              sx={{
-                color: "white",
-                borderColor: "white",
-                px: 3,
-                "&:hover": { borderColor: "#fcd34d", color: "#fcd34d" },
-              }}
+          {isMobile ? (
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleMenuClick}
+              sx={{ mr: 2 }}
             >
-              Sign In
-            </Button>
-            <Button
-              component={Link}
-              href="/signup"
-              variant="contained"
-              endIcon={<ArrowRight />}
-              sx={{
-                px: 3,
-                background: "linear-gradient(90deg,#7c3aed,#f59e0b)",
-                backgroundSize: "200% 200%",
-                animation: `${gradientShift} 8s ease infinite`,
-                color: "white",
-                fontWeight: "bold",
-                "&:hover": { opacity: 0.9 },
-              }}
-            >
-              Sign Up
-            </Button>
-          </Stack>
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <Stack direction="row" spacing={2}>
+              <Button
+                component={Link}
+                href="/signin"
+                variant="outlined"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  px: 3,
+                  "&:hover": { borderColor: "#fcd34d", color: "#fcd34d" },
+                }}
+              >
+                Sign In
+              </Button>
+              <Button
+                component={Link}
+                href="/signup"
+                variant="contained"
+                endIcon={<ArrowRight />}
+                sx={{
+                  px: 3,
+                  background: "linear-gradient(90deg,#7c3aed,#f59e0b)",
+                  backgroundSize: "200% 200%",
+                  animation: `${gradientShift} 8s ease infinite`,
+                  color: "white",
+                  fontWeight: "bold",
+                  "&:hover": { opacity: 0.9 },
+                }}
+              >
+                Sign Up
+              </Button>
+            </Stack>
+          )}
+          <Menu
+            id="mobile-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            <MenuItem onClick={handleMenuClose} component={Link} href="/signin">Sign In</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={Link} href="/signup">Sign Up</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
@@ -214,6 +255,8 @@ export default function LandingPage() {
   fontWeight="bold"
   sx={{
     mb: 3,
+    mt: { xs: 4, md: 0 }, // Added responsive top margin
+    fontSize: { xs: '2.5rem', sm: '3rem', md: '4rem' }, // Added responsive font size
     background: "linear-gradient(90deg,#fcd34d,#a78bfa,#60a5fa)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
@@ -256,7 +299,7 @@ export default function LandingPage() {
   sx={{
     px: 4,
     py: 1.5,
-    background: "linear-gradient(90deg,#7c3aed,#f59e0b,#ec4899)",
+    background: "linear-gradient(90deg,#7c3aed,#f59e0b)",
     backgroundSize: "200% 200%",
     animation: `${gradientShift} 12s ease infinite`,
     color: "white",
